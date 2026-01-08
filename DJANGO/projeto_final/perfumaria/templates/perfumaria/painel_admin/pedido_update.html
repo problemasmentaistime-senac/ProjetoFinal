@@ -1,0 +1,75 @@
+{% extends 'perfumaria/painel_admin/index.html' %}
+
+{% block page_title %}Alterar Status do Pedido #{{ object.id }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Alterar Status do Pedido</h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-4">
+                    <p><strong>Pedido:</strong> #{{ object.id }}</p>
+                    <p><strong>Cliente:</strong> {{ object.cliente.username }}</p>
+                    <p><strong>Data:</strong> {{ object.data_pedido|date:"d/m/Y H:i" }}</p>
+                    <p><strong>Total:</strong> R$ {{ object.total_pedido|floatformat:2 }}</p>
+                </div>
+                
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="id_status" class="form-label">Status do Pedido:</label>
+                        {{ form.status }}
+                        <div class="form-text">
+                            <strong>Legenda:</strong><br>
+                            <span class="badge bg-warning">Pendente</span> - Aguardando pagamento<br>
+                            <span class="badge bg-success">Pago</span> - Pagamento confirmado<br>
+                            <span class="badge bg-info">Enviado</span> - Produto enviado
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between">
+                        <a href="{% url 'perfumaria:admin_pedido_detail' object.pk %}" class="btn btn-secondary">
+                            <i class="fas fa-times me-1"></i> Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-1"></i> Salvar Alterações
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Histórico de Status</h5>
+            </div>
+            <div class="card-body">
+                <p><strong>Status atual:</strong></p>
+                {% if object.status == 'P' %}
+                    <span class="badge bg-warning fs-6">Pendente</span>
+                {% elif object.status == 'PA' %}
+                    <span class="badge bg-success fs-6">Pago</span>
+                {% elif object.status == 'E' %}
+                    <span class="badge bg-info fs-6">Enviado</span>
+                {% endif %}
+                
+                <hr>
+                <p class="mb-1"><strong>Itens do pedido:</strong></p>
+                <ul class="list-group list-group-flush">
+                    {% for item in object.itens.all %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        {{ item.produto.nome }}
+                        <span class="badge bg-primary rounded-pill">{{ item.quantity }}x</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

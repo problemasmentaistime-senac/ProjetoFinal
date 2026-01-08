@@ -1,0 +1,263 @@
+{% extends 'perfumaria/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block extra_css %}
+<style>
+:root {
+    --accent: #b0ccc4;
+    --accent-soft: rgba(176, 204, 196, 0.35);
+    --bg-dark: #0f0f0f;
+}
+
+/* =========================
+   CONTAINER
+========================= */
+.cart-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 20px;
+    background: var(--bg-dark);
+    min-height: 100vh;
+    color: #F8FFFD;
+}
+
+/* =========================
+   TITLE
+========================= */
+.cart-title {
+    font-family: 'Alegreya SC', cursive;
+    font-size: 42px;
+    text-align: center;
+    margin-bottom: 50px;
+    text-shadow: 0 2px 6px rgba(176,204,196,0.3);
+}
+
+/* =========================
+   CART GRID
+========================= */
+.cart-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+/* =========================
+   CART ITEM
+========================= */
+.cart-item {
+    display: flex;
+    gap: 24px;
+    background: linear-gradient(145deg, #121212, #0b0b0b);
+    border: 1px solid var(--accent-soft);
+    border-radius: 18px;
+    padding: 20px;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.7);
+}
+
+.cart-item img {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 14px;
+    box-shadow: 0 6px 20px rgba(176,204,196,0.3);
+}
+
+/* =========================
+   ITEM INFO
+========================= */
+.cart-item-info {
+    flex: 1;
+}
+
+.cart-item-info h5 {
+    margin-bottom: 6px;
+    font-weight: 700;
+}
+
+.cart-item-info .quantity {
+    color: #b5b5b5;
+    font-size: 14px;
+}
+
+.cart-item-info .price {
+    margin-top: 10px;
+    font-size: 20px;
+    font-weight: bold;
+    color: var(--accent);
+}
+
+/* =========================
+   ACTIONS
+========================= */
+.cart-item-actions {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+.cart-remove {
+    color: #ff6b6b;
+    font-size: 14px;
+    text-decoration: none;
+    transition: opacity 0.2s;
+}
+
+.cart-remove:hover {
+    opacity: 0.7;
+}
+
+/* =========================
+   TOTAL BOX
+========================= */
+.cart-total-box {
+    margin-top: 50px;
+    background: linear-gradient(145deg, #121212, #0b0b0b);
+    border: 1px solid var(--accent-soft);
+    border-radius: 20px;
+    padding: 30px;
+    text-align: center;
+    box-shadow: 0 12px 35px rgba(0,0,0,0.7);
+}
+
+.cart-total-box h4 {
+    margin-bottom: 10px;
+}
+
+.cart-total-price {
+    font-size: 32px;
+    font-weight: bold;
+    color: var(--accent);
+    margin-bottom: 25px;
+}
+
+/* =========================
+   BUTTONS
+========================= */
+.btn-cart {
+    background: var(--accent);
+    color: #000;
+    padding: 14px 32px;
+    border-radius: 40px;
+    font-weight: bold;
+    border: none;
+    transition: all 0.3s ease;
+    display: inline-block;
+    text-decoration: none;
+}
+
+.btn-cart:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(176,204,196,0.45);
+}
+
+/* =========================
+   EMPTY CART
+========================= */
+.cart-empty {
+    text-align: center;
+    font-style: italic;
+    color: #b5b5b5;
+    margin-top: 60px;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+@media (max-width: 768px) {
+    .cart-item {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .cart-item-actions {
+        align-items: center;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="cart-container">
+
+    <h1 class="cart-title">Seu Carrinho</h1>
+
+    {% if cart_items %}
+        <div class="cart-grid">
+
+            {% for item in cart_items %}
+            <div class="cart-item">
+
+                {% if item.product.imagem %}
+                    <a href="{% url 'perfumaria:produto_detail' pk=item.product.pk %}">
+                        <img src="{{ item.product.imagem.url }}" alt="{{ item.product.nome }}">
+                    </a>
+                {% else %}
+                    <img src="https://via.placeholder.com/120x120?text=Sem+Imagem" alt="Sem imagem">
+                {% endif %}
+
+                <div class="cart-item-info">
+                    <h5>{{ item.product.nome }}</h5>
+                    <div class="quantity">
+                        Quantidade: {{ item.quantity }}
+                    </div>
+                    <div class="price">
+                        R$ {{ item.product.preco|floatformat:2 }}
+                    </div>
+                </div>
+
+                <div class="cart-item-actions">
+                    <a href="{% url 'perfumaria:remove_from_cart' item.id %}" class="cart-remove">
+                        Remover
+                    </a>
+                </div>
+
+            </div>
+            {% endfor %}
+
+        </div>
+
+        <div class="cart-total-box">
+            <h4>Total</h4>
+            <div class="cart-total-price">
+                R$ {{ total_price|floatformat:2 }}
+            </div>
+
+            <a href="{% url 'perfumaria:produtos' %}" class="btn-cart">
+                Continuar Comprando
+            </a>
+            
+            {% if user.is_authenticated and not user.email %}
+                <br>
+                <br>
+                <div class="alert alert-warning">
+                <i class="fas fa-exclamation-triangle"></i>
+                <strong>Atenção!</strong> 
+                 Você precisa cadastrar um email para finalizar sua compra.
+                <a href="{% url 'perfumaria:perfil' %}" class="alert-link">
+                Clique aqui para adicionar seu email
+                </a>
+                </div>
+            {% else %}
+            <form method="POST" action="{% url 'perfumaria:clear_cart' %}">
+                {% csrf_token %}
+                <button type="submit" class="btn-cart">Finalizar Compra</button>
+            </form>
+            {% endif %}
+        </div>
+
+    {% else %}
+        <p class="cart-empty">
+            Seu carrinho está vazio.
+        </p>
+
+        <div class="text-center mt-4">
+            <a href="{% url 'perfumaria:produtos' %}" class="btn-cart">
+                Ver Produtos
+            </a>
+        </div>
+    {% endif %}
+
+</div>
+{% endblock %}

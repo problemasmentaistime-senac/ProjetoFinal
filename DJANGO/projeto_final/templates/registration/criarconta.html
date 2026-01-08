@@ -1,0 +1,50 @@
+{% extends 'perfumaria/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<style>
+.signup-container {
+    max-width: 420px;
+    margin: 60px auto;
+    padding: 30px;
+    background: #1a1a1a;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+}
+
+.signup-title {
+    color: #F8FFFD;
+    font-size: 24px;
+    text-align: center;
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #333;
+}
+
+.btn-gold {
+    background-color: #F8FFFD;
+    color: #000;
+    font-weight: 600;
+    border-radius: 25px;
+}
+
+.btn-gold:hover {
+    background-color: #accdcb;
+    color: #000;
+}
+</style>
+
+<div class="signup-container">
+    <h2 class="signup-title">Crie sua conta</h2>
+
+    <form method="post">
+        {% csrf_token %}
+        
+        {{ form|crispy }}
+
+        <button type="submit" class="btn btn-gold w-100 mt-3">
+            Criar conta
+        </button>
+    </form>
+</div>
+{% endblock %}

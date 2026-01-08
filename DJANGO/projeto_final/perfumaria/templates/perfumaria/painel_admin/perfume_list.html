@@ -1,0 +1,72 @@
+{% extends 'perfumaria/painel_admin/index.html' %}
+
+{% block page_title %}Gerenciar Perfumes{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <div class="d-flex justify-content-between align-items-center">
+            <h5>Perfumes</h5>
+            <a href="{% url 'perfumaria:perfume_create' %}" class="btn btn-primary">
+                <i class="fas fa-plus me-1"></i> Novo Perfume
+            </a>
+        </div>
+    </div>
+    <div class="card-body">
+        {% if messages %}
+        <div class="mb-3">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>Categoria</th>
+                    <th>Preço</th>
+                    <th>Destaque</th>
+                    <th>Data</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for perfume in perfumes %}
+                <tr>
+                    <td>{{ perfume.nome }}</td>
+                    <td>{{ perfume.categoria.nome }}</td>
+                    <td>R$ {{ perfume.preco }}</td>
+                    <td>
+                        {% if perfume.destaque %}
+                            <span class="badge bg-success">Sim</span>
+                        {% else %}
+                            <span class="badge bg-secondary">Não</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ perfume.data_cadastro|date:"d/m/Y" }}</td>
+                    <td>
+                        <div class="btn-group">
+                            <a href="{% url 'perfumaria:perfume_update' perfume.pk %}" class="btn btn-sm btn-primary">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a href="{% url 'perfumaria:perfume_delete' perfume.pk %}" class="btn btn-sm btn-danger">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center">Nenhum perfume cadastrado.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

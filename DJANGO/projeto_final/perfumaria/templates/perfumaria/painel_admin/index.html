@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Admin - {% block title %}Dashboard{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { background-color: #f8f9fa; }
+        .sidebar { 
+            background-color: #2c3e50; 
+            min-height: 100vh;
+            color: white;
+            padding: 0;
+        }
+        .sidebar .nav-link { 
+            color: #ecf0f1; 
+            padding: 12px 20px;
+            border-left: 4px solid transparent;
+            transition: all 0.3s;
+        }
+        .sidebar .nav-link:hover { 
+            color: #fff; 
+            background-color: #34495e;
+            border-left: 4px solid #3498db;
+        }
+        .sidebar .nav-link.active { 
+            background-color: #34495e;
+            border-left: 4px solid #3498db;
+            color: #fff;
+        }
+        .main-content { 
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        .card { 
+            margin-bottom: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .sidebar-header {
+            padding: 20px;
+            background-color: #1a252f;
+            border-bottom: 1px solid #34495e;
+        }
+        .sidebar-header h5 {
+            color: #3498db;
+            margin: 0;
+        }
+        .user-info {
+            padding: 15px 20px;
+            background-color: #34495e;
+            border-top: 1px solid #2c3e50;
+            font-size: 14px;
+        }
+        .badge-notification {
+            position: absolute;
+            top: 5px;
+            right: 10px;
+            font-size: 0.7rem;
+            padding: 2px 6px;
+        }
+        .nav-item {
+            position: relative;
+        }
+        .badge-pendentes {
+            background-color: #ffc107;
+            color: #000;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-2 col-lg-2 sidebar">
+                <div class="sidebar-header">
+                    <h5><i class="fas fa-crown me-2"></i>Painel Admin</h5>
+                </div>
+                <nav class="nav flex-column mt-3">
+                    <a class="nav-link {% if request.path == '/painel-admin/' %}active{% endif %}" href="{% url 'perfumaria:painel_admin' %}">
+                        <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                    </a>
+                    <a class="nav-link {% if 'categorias' in request.path %}active{% endif %}" href="{% url 'perfumaria:categoria_list' %}">
+                        <i class="fas fa-tags me-2"></i>Categorias
+                    </a>
+                    <a class="nav-link {% if 'perfumes' in request.path %}active{% endif %}" href="{% url 'perfumaria:perfume_list' %}">
+                        <i class="fas fa-wine-bottle me-2"></i>Perfumes
+                    </a>
+                    <a class="nav-link {% if 'pedidos' in request.path and 'painel-admin/pedidos' in request.path %}active{% endif %}" href="{% url 'perfumaria:admin_pedido_list' %}">
+                        <i class="fas fa-shopping-cart me-2"></i>Pedidos
+                        {% if total_pedidos > 0 %}
+                        <span class="badge bg-danger badge-notification">{{ total_pedidos }}</span>
+                        {% endif %}
+                        {% if pedidos_pendentes > 0 %}
+                        <span class="badge badge-pendentes badge-notification" style="top: 25px;">{{ pedidos_pendentes }} pendente{{ pedidos_pendentes|pluralize }}</span>
+                        {% endif %}
+                    </a>
+                    <div class="mt-4">
+                        <a class="nav-link" href="/admin/" target="_blank">
+                            <i class="fas fa-cogs me-2"></i>Admin Django
+                        </a>
+                        <a class="nav-link" href="{% url 'perfumaria:home' %}">
+                            <i class="fas fa-store me-2"></i>Site Principal
+                        </a>
+                        <a class="nav-link" href="{% url 'perfumaria:logout_admin' %}">
+                            <i class="fas fa-sign-out-alt me-2"></i>Sair
+                        </a>
+                    </div>
+                </nav>
+                <div class="user-info">
+                    <small>
+                        <i class="fas fa-user me-1"></i> {{ user.username }}<br>
+                        <i class="fas fa-shield-alt me-1"></i> Super Admin<br>
+                        {% if total_pedidos > 0 %}
+                        <i class="fas fa-shopping-cart me-1"></i> {{ total_pedidos }} pedido{{ total_pedidos|pluralize }}
+                        {% endif %}
+                    </small>
+                </div>
+            </div>
+            
+            <!-- Conteúdo Principal -->
+            <div class="col-md-10 col-lg-10 main-content">
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+                
+                
+                <h2 class="mb-4">{% block page_title %}Dashboard{% endblock %}</h2>
+                
+                {% block content %}{% endblock %}
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

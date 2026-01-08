@@ -1,0 +1,124 @@
+{% extends 'perfumaria/base.html' %}
+
+{% block extra_css %}
+<style>
+:root {
+    --accent: #b0ccc4;
+    --accent-soft: rgba(176, 204, 196, 0.35);
+    --bg-dark: #0f0f0f;
+    --text-light: #F8FFFD;
+}
+
+.pedido-detail-container {
+    max-width: 1000px;
+    margin: 40px auto;
+    padding: 30px;
+    background: var(--bg-dark);
+    color: var(--text-light);
+    border-radius: 18px;
+    box-shadow: 0 12px 35px rgba(0,0,0,0.7);
+}
+
+.pedido-detail-container h2 {
+    font-family: 'Alegreya SC', cursive;
+    font-size: 36px;
+    margin-bottom: 20px;
+    text-align: center;
+    text-shadow: 0 2px 6px var(--accent-soft);
+}
+
+.pedido-info p {
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+.pedido-itens {
+    margin-top: 25px;
+}
+
+.pedido-itens li {
+    padding: 12px 0;
+    border-bottom: 1px solid #2a2a2a;
+}
+
+.pedido-badge {
+    display: inline-block;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 12px;
+    border: 1px solid var(--accent-soft);
+    color: var(--accent);
+    margin-right: 10px;
+}
+
+.pedido-total {
+    font-size: 20px;
+    font-weight: bold;
+    margin-top: 20px;
+    color: var(--accent);
+}
+
+.btn-voltar-pedido {
+    display: inline-block;
+    margin-top: 30px;
+    padding: 12px 28px;
+    font-weight: bold;
+    border-radius: 30px;
+    background: var(--accent);
+    color: #000 !important;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.btn-voltar-pedido:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(176,204,196,0.5);
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+    .pedido-detail-container {
+        padding: 20px;
+    }
+    .pedido-detail-container h2 {
+        font-size: 28px;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="pedido-detail-container">
+    <h2>Detalhes do Pedido #{{ pedido.id }}</h2>
+
+    <div class="pedido-info">
+        <p><span class="pedido-badge">Status: {{ pedido.get_status_display }}</span></p>
+        <p><span class="pedido-badge">Data: {{ pedido.data_pedido|date:"d/m/Y H:i" }}</span></p>
+    </div>
+
+    <div class="pedido-itens">
+        <h3>Itens do Pedido</h3>
+        {% if pedido.itens.exists %}
+            <ul>
+                {% for item in pedido.itens.all %}
+                    <li>
+                        <strong>{{ item.produto.nome }}</strong> — Quantidade: {{ item.quantity }} — 
+                        Preço: R$ {{ item.preco|floatformat:2 }}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="text-muted fst-italic">Nenhum item neste pedido.</p>
+        {% endif %}
+    </div>
+
+    <div class="pedido-total">
+        Total: R$ {{ pedido.total_pedido|floatformat:2 }}
+    </div>
+
+    <a href="{% url 'perfumaria:lista_pedidos' %}" class="btn-voltar-pedido">
+        <i class="fas fa-arrow-left"></i> Voltar para pedidos
+    </a>
+</div>
+{% endblock %}

@@ -1,0 +1,48 @@
+{% extends 'perfumaria/painel_admin/index.html' %}
+
+{% block page_title %}Excluir Perfume{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header bg-danger text-white">
+        <h5><i class="fas fa-exclamation-triangle me-2"></i>Confirmar Exclusão</h5>
+    </div>
+    <div class="card-body">
+        <p>Tem certeza que deseja excluir o perfume <strong>"{{ object.nome }}"</strong>?</p>
+        
+        <div class="alert alert-warning">
+            <i class="fas fa-exclamation-circle me-2"></i>
+            Esta ação não pode ser desfeita. O perfume será removido permanentemente.
+        </div>
+        
+        <div class="mb-3">
+            <p><strong>Detalhes:</strong></p>
+            <ul class="list-group">
+                <li class="list-group-item"><strong>Nome:</strong> {{ object.nome }}</li>
+                <li class="list-group-item"><strong>Categoria:</strong> {{ object.categoria.nome }}</li>
+                <li class="list-group-item"><strong>Preço:</strong> R$ {{ object.preco }}</li>
+                <li class="list-group-item">
+                    <strong>Estoque:</strong> 
+                    {% if object.estoque <= 0 %}
+                        <span class="badge bg-danger">ESGOTADO ({{ object.estoque }})</span>
+                    {% else %}
+                        <span class="badge bg-success">{{ object.estoque }} unidades</span>
+                    {% endif %}
+                </li>
+            </ul>
+        </div>
+        
+        <form method="post">
+            {% csrf_token %}
+            <div class="d-flex justify-content-end">
+                <a href="{% url 'perfumaria:perfume_list' %}" class="btn btn-secondary me-2">
+                    <i class="fas fa-times me-1"></i> Cancelar
+                </a>
+                <button type="submit" class="btn btn-danger">
+                    <i class="fas fa-trash me-1"></i> Excluir Perfume
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

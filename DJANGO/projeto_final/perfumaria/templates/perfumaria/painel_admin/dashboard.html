@@ -1,0 +1,240 @@
+{% extends 'perfumaria/painel_admin/index.html' %}
+
+{% block page_title %}Dashboard - Administração{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-3 mb-4">
+        <div class="card text-white bg-primary">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-title">Categorias</h6>
+                        <h3>{{ total_categorias }}</h3>
+                    </div>
+                    <i class="fas fa-tags fa-3x"></i>
+                </div>
+                <a href="{% url 'perfumaria:categoria_list' %}" class="text-white text-decoration-none">
+                    <small>Ver todas <i class="fas fa-arrow-right"></i></small>
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3 mb-4">
+        <div class="card text-white bg-success">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-title">Perfumes</h6>
+                        <h3>{{ total_perfumes }}</h3>
+                    </div>
+                    <i class="fas fa-wine-bottle fa-3x"></i>
+                </div>
+                <a href="{% url 'perfumaria:perfume_list' %}" class="text-white text-decoration-none">
+                    <small>Ver todos <i class="fas fa-arrow-right"></i></small>
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3 mb-4">
+        <div class="card text-white bg-warning">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-title">Em Destaque</h6>
+                        <h3>{{ perfumes_destaque }}</h3>
+                    </div>
+                    <i class="fas fa-star fa-3x"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3 mb-4">
+        <div class="card text-white bg-danger">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="card-title">Produtos em Falta</h6>
+                        <h3>{{ produtos_sem_estoque }}</h3>  <!-- Novo card -->
+                    </div>
+                    <i class="fas fa-exclamation-triangle fa-3x"></i>
+                </div>
+                <a href="{% url 'perfumaria:perfume_list' %}" class="text-white text-decoration-none">
+                    <small>Ver produtos <i class="fas fa-arrow-right"></i></small>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Ações Rápidas</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="{% url 'perfumaria:categoria_create' %}" class="btn btn-primary">
+                        <i class="fas fa-plus me-2"></i> Nova Categoria
+                    </a>
+                    <a href="{% url 'perfumaria:perfume_create' %}" class="btn btn-success">
+                        <i class="fas fa-plus me-2"></i> Novo Perfume
+                    </a>
+                    <a href="/admin/" target="_blank" class="btn btn-secondary">
+                        <i class="fas fa-cogs me-2"></i> Admin Django
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Atalhos</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-6 mb-2">
+                        <a href="{% url 'perfumaria:categoria_list' %}" class="btn btn-outline-primary w-100">
+                            <i class="fas fa-tags me-1"></i> Categorias
+                        </a>
+                    </div>
+                    <div class="col-6 mb-2">
+                        <a href="{% url 'perfumaria:perfume_list' %}" class="btn btn-outline-success w-100">
+                            <i class="fas fa-wine-bottle me-1"></i> Perfumes
+                        </a>
+                    </div>
+                    <div class="col-6 mb-2">
+                        <a href="/admin/auth/user/" target="_blank" class="btn btn-outline-warning w-100">
+                            <i class="fas fa-users me-1"></i> Usuários
+                        </a>
+                    </div>
+                    <div class="col-6 mb-2">
+                        <a href="{% url 'perfumaria:home' %}" class="btn btn-outline-dark w-100">
+                            <i class="fas fa-store me-1"></i> Site
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <div class="d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Últimos Perfumes Adicionados</h5>
+            <a href="{% url 'perfumaria:perfume_list' %}" class="btn btn-sm btn-primary">Ver todos</a>
+        </div>
+    </div>
+    <div class="card-body">
+        {% if ultimos_perfumes %}
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Categoria</th>
+                            <th>Preço</th>
+                            <th>Destaque</th>
+                            <th>Data</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for perfume in ultimos_perfumes %}
+                        <tr>
+                            <td>{{ perfume.nome }}</td>
+                            <td>{{ perfume.categoria.nome }}</td>
+                            <td>R$ {{ perfume.preco }}</td>
+                            <td>
+                                {% if perfume.destaque %}
+                                    <span class="badge bg-success">Sim</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">Não</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ perfume.data_cadastro|date:"d/m/Y" }}</td>
+                            <td>
+                                <div class="btn-group btn-group-sm">
+                                    <a href="{% url 'perfumaria:perfume_update' perfume.pk %}" class="btn btn-primary">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a href="{% url 'perfumaria:perfume_delete' perfume.pk %}" class="btn btn-danger">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="text-center py-4">
+                <i class="fas fa-wine-bottle fa-3x text-muted mb-3"></i>
+                <p class="text-muted">Nenhum perfume cadastrado ainda.</p>
+                <a href="{% url 'perfumaria:perfume_create' %}" class="btn btn-primary">
+                    <i class="fas fa-plus me-1"></i> Adicionar Primeiro Perfume
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Adicione este bloco se quiser mostrar produtos com estoque baixo -->
+<div class="card mt-4">
+    <div class="card-header">
+        <div class="d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Produtos com Estoque Baixo</h5>
+            <a href="{% url 'perfumaria:perfume_list' %}" class="btn btn-sm btn-warning">Ver todos</a>
+        </div>
+    </div>
+    <div class="card-body">
+        {% if produtos_estoque_baixo %}
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Estoque Atual</th>
+                            <th>Estoque Mínimo</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for produto in produtos_estoque_baixo %}
+                        <tr>
+                            <td>{{ produto.nome }}</td>
+                            <td>
+                                <span class="badge {% if produto.estoque <= 0 %}bg-danger{% else %}bg-warning{% endif %}">
+                                    {{ produto.estoque }}
+                                </span>
+                            </td>
+                            <td>{{ produto.estoque_minimo }}</td>
+                            <td>
+                                <div class="btn-group btn-group-sm">
+                                    <a href="{% url 'perfumaria:perfume_update' produto.pk %}" class="btn btn-primary">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="text-center py-4">
+                <i class="fas fa-check-circle fa-3x text-success mb-3"></i>
+                <p class="text-success">Nenhum produto com estoque baixo no momento.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,372 @@
+{% extends 'perfumaria/base.html' %}
+
+{% block extra_css %}
+<style>
+    .produtos-container {
+        padding: 40px 20px;
+        max-width: 1200px;
+        margin: 0 auto;
+        background: #0f0f0f;
+        min-height: 100vh;
+    }
+    
+    .titulo-principal {
+        font-family: 'Alegreya SC', cursive;
+        font-size: 48px;
+        color: #F8FFFD;
+        text-align: center;
+        margin-bottom: 50px;
+        text-shadow: 0 2px 4px rgba(212, 175, 55, 0.3);
+    }
+    
+    .categoria-titulo {
+        font-family: 'Alegreya SC', cursive;
+        font-size: 36px;
+        color: #F8FFFD;
+        text-align: center;
+        margin-bottom: 30px;
+        padding-bottom: 15px;
+        border-bottom: 2px solid #333333;
+    }
+    
+    .filtro-container {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 50px;
+    }
+    
+    .filtro-select {
+        background: #1a1a1a;
+        color: #F8FFFD;
+        border: 2px solid #F8FFFD;
+        padding: 12px 30px;
+        border-radius: 5px;
+        font-size: 16px;
+        min-width: 250px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        outline: none;
+    }
+    
+    .filtro-select:hover {
+        background: #222;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(212, 175, 55, 0.2);
+    }
+    
+    .filtro-select option {
+        background: #1a1a1a;
+        color: #F8FFFD;
+        padding: 10px;
+    }
+    
+    .produtos-grade {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 30px;
+        margin-bottom: 60px;
+    }
+    
+    .produto-card {
+        background: #1a1a1a;
+        border-radius: 10px;
+        overflow: hidden;
+        border: 2px solid #333333;
+        transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        position: relative;
+        height: 400px;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .produto-card:hover {
+        transform: translateY(-10px);
+        border-color: #F8FFFD;
+        box-shadow: 0 10px 30px rgba(212, 175, 55, 0.3);
+    }
+    
+    .produto-imagem-container {
+        height: 180px;
+        background: linear-gradient(45deg, #1a1a1a, #2d2d2d);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .produto-imagem {
+        max-width: 100%;
+        max-height: 140px;
+        object-fit: contain;
+        transition: transform 0.5s ease;
+    }
+    
+    .produto-card:hover .produto-imagem {
+        transform: scale(1.05);
+    }
+    
+    .imagem-placeholder {
+        font-size: 48px;
+        color: #F8FFFD;
+        opacity: 0.3;
+    }
+    
+    .produto-badges {
+        position: absolute;
+        top: 15px;
+        left: 15px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        z-index: 2;
+    }
+    
+    .badge-destaque {
+        background: #F8FFFD;
+        color: #000;
+        padding: 5px 12px;
+        border-radius: 3px;
+        font-size: 12px;
+        font-weight: bold;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    
+    .badge-categoria {
+        background: rgba(0, 0, 0, 0.7);
+        color: #F8FFFD;
+        padding: 5px 12px;
+        border-radius: 3px;
+        font-size: 12px;
+        border: 1px solid #F8FFFD;
+    }
+    
+    .produto-conteudo {
+        padding: 20px;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .produto-nome {
+        color: #fff;
+        font-size: 18px;
+        margin-bottom: 10px;
+        font-weight: 600;
+        height: 44px;
+        overflow: hidden;
+        display: -webkit-box;
+        line-clamp: 2;
+        -webkit-box-orient: vertical;
+    }
+    
+    .produto-descricao {
+        color: #aaa;
+        font-size: 14px;
+        line-height: 1.5;
+        margin-bottom: 15px;
+        flex-grow: 1;
+        overflow: hidden;
+        display: -webkit-box;
+        line-clamp: 3;
+        -webkit-box-orient: vertical;
+    }
+    
+    .produto-footer {
+        margin-top: auto;
+        border-top: 1px solid #333333;
+        padding-top: 15px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .produto-preco {
+        color: #F8FFFD;
+        font-size: 24px;
+        font-weight: bold;
+    }
+    
+    .btn-comprar {
+        background: #F8FFFD;
+        color: #000;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: bold;
+        font-size: 14px;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .btn-comprar:hover {
+        background: #accdcb;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4);
+    }
+    
+    .sem-produtos {
+        text-align: center;
+        padding: 60px 20px;
+        background: #1a1a1a;
+        border-radius: 10px;
+        border: 2px dashed #F8FFFD;
+        grid-column: 1 / -1;
+    }
+    
+    .sem-produtos-icon {
+        font-size: 48px;
+        color: #F8FFFD;
+        margin-bottom: 20px;
+    }
+    
+    .sem-produtos h3 {
+        color: #F8FFFD;
+        font-size: 24px;
+        margin-bottom: 10px;
+    }
+    
+    .sem-produtos p {
+        color: #aaa;
+        font-size: 16px;
+    }
+    
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .produto-card {
+        animation: fadeIn 0.6s ease forwards;
+        animation-delay: calc(var(--order) * 0.1s);
+        opacity: 0;
+    }
+    
+    @media (max-width: 768px) {
+        .produtos-grade {
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .produto-card {
+            height: 380px;
+        }
+        
+        .produto-imagem-container {
+            height: 160px;
+        }
+        
+        .titulo-principal {
+            font-size: 36px;
+        }
+        
+        .filtro-select {
+            min-width: 200px;
+            padding: 10px 20px;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .produtos-grade {
+            grid-template-columns: 1fr;
+        }
+        
+        .produtos-container {
+            padding: 20px 10px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="produtos-container">
+    {% if categoria_selecionada %}
+    <h1 class="categoria-titulo">Perfumes: {{ categoria_selecionada.nome }}</h1>
+    {% else %}
+    <h1 class="titulo-principal">Nossos Perfumes</h1>
+    {% endif %}
+    
+    <div class="filtro-container">
+        <select class="filtro-select" id="categoriaFilter" onchange="filtrarProdutos(this.value)">
+            <option value="">Todas as categorias</option>
+            {% for categoria in categorias %}
+                <option value="{{ categoria.id }}" 
+                        {% if categoria_selecionada and categoria.id == categoria_selecionada.id %}selected{% endif %}>
+                    {{ categoria.nome }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+    
+    <div class="produtos-grade" id="produtosGrid">
+        {% for perfume in perfumes %}
+        <div class="produto-card" style="--order: {{ forloop.counter0 }}">
+            <div class="produto-imagem-container">
+                <div class="produto-badges">
+                    {% if perfume.destaque %}
+                    <span class="badge-destaque">
+                        <i class="fas fa-star"></i> Destaque
+                    </span>
+                    {% endif %}
+                    <span class="badge-categoria">{{ perfume.categoria.nome }}</span>
+                </div>
+                
+                {% if perfume.imagem %}
+                    <img src="{{ perfume.imagem.url }}" 
+                         alt="{{ perfume.nome }}"
+                         class="produto-imagem">
+                {% else %}
+                    <div class="imagem-placeholder">
+                        <i class="fas fa-wine-bottle"></i>
+                    </div>
+                {% endif %}
+            </div>
+            
+            <div class="produto-conteudo">
+                <h3 class="produto-nome">{{ perfume.nome }}</h3>
+                <p class="produto-descricao">{{ perfume.descricao|default:"Fragrância exclusiva e sofisticada." }}</p>
+                
+                <div class="produto-footer">
+                    <div class="produto-preco">R$ {{ perfume.preco }}</div>
+                    <a href= "{% url 'perfumaria:produto_detail' pk=perfume.pk %}">
+                        <button class="btn-comprar">
+                            <i class="fas fa-shopping-cart"></i>
+                            Comprar
+                        </button>
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="sem-produtos">
+            <div class="sem-produtos-icon">
+                <i class="fas fa-wine-bottle"></i>
+            </div>
+            <h3>Nenhum perfume encontrado</h3>
+            <p>Volte em breve para conhecer nossa coleção</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+function filtrarProdutos(categoriaId) {
+    if (categoriaId) {
+        window.location.href = "{% url 'perfumaria:produtos' %}?categoria=" + categoriaId;
+    } else {
+        window.location.href = "{% url 'perfumaria:produtos' %}";
+    }
+}
+</script>
+{% endblock %}

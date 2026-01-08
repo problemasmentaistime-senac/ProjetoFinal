@@ -1,0 +1,102 @@
+{% extends 'perfumaria/base.html' %}
+
+{% block extra_css %}
+<style>
+:root {
+    --accent: #b0ccc4;
+    --accent-soft: rgba(176, 204, 196, 0.35);
+    --bg-dark: #0f0f0f;
+    --text-light: #F8FFFD;
+}
+
+.meus-pedidos-container {
+    max-width: 1000px;
+    margin: 40px auto;
+    padding: 20px;
+    color: var(--text-light);
+}
+
+.meus-pedidos-container h2 {
+    font-family: 'Alegreya SC', cursive;
+    font-size: 36px;
+    text-align: center;
+    margin-bottom: 30px;
+    text-shadow: 0 2px 6px var(--accent-soft);
+}
+
+.pedido-card {
+    background: var(--bg-dark);
+    border: 1px solid var(--accent-soft);
+    border-radius: 18px;
+    padding: 20px 25px;
+    margin-bottom: 20px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.pedido-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 35px rgba(176,204,196,0.45);
+}
+
+.pedido-card h3 {
+    margin-top: 0;
+    font-size: 22px;
+    margin-bottom: 10px;
+}
+
+.pedido-badge {
+    display: inline-block;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 12px;
+    border: 1px solid var(--accent-soft);
+    color: var(--accent);
+    margin-right: 10px;
+}
+
+.pedido-card a {
+    text-decoration: none;
+    color: var(--accent);
+    font-weight: bold;
+    transition: color 0.2s;
+}
+
+.pedido-card a:hover {
+    color: #fff;
+}
+
+.text-muted {
+    color: #b5b5b5;
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+    .meus-pedidos-container h2 {
+        font-size: 28px;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="meus-pedidos-container">
+    <h2>Meus Pedidos</h2>
+
+    {% if pedidos %}
+        {% for pedido in pedidos %}
+            <div class="pedido-card">
+                <h3>Pedido #{{ pedido.id }}</h3>
+                <p>
+                    <span class="pedido-badge">Data: {{ pedido.data_pedido|date:"d/m/Y H:i" }}</span>
+                    <span class="pedido-badge">Status: {{ pedido.get_status_display }}</span>
+                </p>
+                <a href="{% url 'perfumaria:detalhe_pedido' pedido.id %}">Ver detalhes</a>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p class="text-muted fst-italic">Você não tem pedidos ainda.</p>
+    {% endif %}
+</div>
+{% endblock %}

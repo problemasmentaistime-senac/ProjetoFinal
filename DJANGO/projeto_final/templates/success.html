@@ -1,0 +1,33 @@
+{% extends 'perfumaria/base.html' %}
+
+{% block content %}
+<style>
+.success-message {
+    max-width: 420px;
+    margin: 80px auto;
+    padding: 40px;
+    background: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+}
+
+.success-message h1 {
+    color: #b0ccc4;
+    font-size: 28px;
+    margin-bottom: 15px;
+}
+
+.success-message p {
+    color: #ccc;
+    font-size: 16px;
+}
+</style>
+
+<div class="success-message">
+    <h1>Obrigado!</h1>
+    <p>Recebemos sua mensagem.</p>
+</div>
+
+{% endblock %}

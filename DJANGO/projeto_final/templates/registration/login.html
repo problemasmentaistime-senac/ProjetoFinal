@@ -1,0 +1,484 @@
+{% extends 'perfumaria/base.html' %}
+
+{% block content %}
+<style>
+
+.login-content {
+    max-width: 400px;
+    margin: 50px auto;
+    padding: 30px;
+    background: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 10px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+}
+
+.login-content h2 {
+    color: #F8FFFD;
+    font-size: 24px;
+    text-align: center;
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #333;
+}
+
+
+.login-content form {
+    margin-bottom: 20px;
+}
+
+
+.login-content form p label {
+    color: #cccccc;
+    font-size: 14px;
+    font-weight: 500;
+    display: block;
+    margin-bottom: 5px;
+}
+
+
+.login-content input[type="text"],
+.login-content input[type="password"],
+.login-content input[type="email"] {
+    width: 100%;
+    padding: 10px 12px;
+    background: #2a2a2a;
+    border: 1px solid #444;
+    border-radius: 5px;
+    color: #ffffff;
+    font-size: 14px;
+    margin-bottom: 5px;
+}
+
+.login-content input:focus {
+    outline: none;
+    border-color: #F8FFFD;
+}
+
+
+.login-content button[type="submit"] {
+    background: #F8FFFD;
+    color: #000000;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 25px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 10px;
+}
+
+.login-content button[type="submit"]:hover {
+    background: #accdcb;
+}
+
+
+.login-content > a {
+    display: block;
+    text-align: center;
+    color: #F8FFFD;
+    text-decoration: none;
+    padding-top: 15px;
+    border-top: 1px solid #333;
+}
+
+.login-content > a:hover {
+    color: #accdcb;
+    text-decoration: underline;
+}
+
+
+.login-content .errorlist {
+    color: #ff6b6b;
+    font-size: 12px;
+    margin: 5px 0;
+    padding-left: 15px;
+}
+
+/* NOVOS ESTILOS PARA MENSAGENS DE ERRO */
+.alerta-bloqueio {
+    background-color: #dc3545;
+    color: white;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    border-left: 5px solid #c82333;
+}
+
+.alerta-tentativas {
+    background-color: #ffc107;
+    color: #000;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    border-left: 5px solid #e0a800;
+}
+
+.info-tentativas {
+    background-color: #17a2b8;
+    color: white;
+    padding: 10px;
+    border-radius: 6px;
+    margin-top: 10px;
+    font-size: 13px;
+}
+
+/* Estilo para mensagens do Django */
+.alert {
+    padding: 12px;
+    border-radius: 6px;
+    margin-bottom: 15px;
+}
+
+.alert-danger {
+    background-color: #dc3545;
+    color: white;
+}
+
+.alert-warning {
+    background-color: #ffc107;
+    color: #000;
+}
+
+.alert-success {
+    background-color: #28a745;
+    color: white;
+}
+
+/* Estilos para o formulário de recuperação de senha */
+.reset-password-form {
+    display: none;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #333;
+}
+
+.reset-password-form.active {
+    display: block;
+}
+
+.reset-password-form h3 {
+    color: #F8FFFD;
+    font-size: 18px;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.btn-toggle-reset {
+    background: transparent;
+    border: none;
+    color: #F8FFFD;
+    cursor: pointer;
+    font-size: 14px;
+    padding: 5px 10px;
+    margin-top: 10px;
+}
+
+.btn-toggle-reset:hover {
+    color: #accdcb;
+    text-decoration: underline;
+}
+
+.btn-secondary {
+    background: #6c757d;
+    color: white;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 20px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.btn-secondary:hover {
+    background: #5a6268;
+}
+</style>
+
+<div class="login-content">
+    <h2>Log In</h2>
+    
+    <!-- Exibir mensagens do Django -->
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                <i class="fas fa-{% if message.tags == 'error' %}exclamation-circle{% elif message.tags == 'warning' %}exclamation-triangle{% else %}info-circle{% endif %} me-2"></i>
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+    
+    <!-- Verificar se há bloqueio por tentativas -->
+    {% if form.errors and form.username.value %}
+        {% with username=form.username.value %}
+            {% for user_obj in users %}
+                {% if user_obj.username == username and user_obj.perfil.esta_bloqueado %}
+                    <div class="alerta-bloqueio">
+                        <i class="fas fa-lock me-2"></i>
+                        <strong>Conta Temporariamente Bloqueada!</strong><br>
+                        Você excedeu o número máximo de tentativas. 
+                        Tente novamente em 15 minutos ou entre em contato com o suporte.
+                    </div>
+                {% endif %}
+            {% endfor %}
+        {% endwith %}
+    {% endif %}
+    
+    <!-- Mostrar contagem de tentativas restantes -->
+    {% if form.errors and form.username.value %}
+        {% with username=form.username.value %}
+            {% for user_obj in users %}
+                {% if user_obj.username == username and user_obj.perfil.tentativas_erro_senha > 0 %}
+                    <div class="info-tentativas">
+                        <i class="fas fa-shield-alt me-2"></i>
+                        <strong>Tentativa {{ user_obj.perfil.tentativas_erro_senha }} de 3</strong><br>
+                        Após 3 tentativas erradas, sua conta será bloqueada temporariamente.
+                    </div>
+                {% endif %}
+            {% endfor %}
+        {% endwith %}
+    {% endif %}
+    
+    <!-- Formulário de Login -->
+    <form method="post" id="loginForm">
+        {% csrf_token %}
+        
+        <!-- Campos do formulário -->
+        {% for field in form %}
+            <div class="form-group mb-3">
+                <label for="{{ field.id_for_label }}" style="color: #cccccc;">
+                    {{ field.label }}
+                </label>
+                {{ field }}
+                {% if field.errors %}
+                    <div class="errorlist">
+                        {% for error in field.errors %}
+                            <i class="fas fa-exclamation-circle me-1"></i>{{ error }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        {% endfor %}
+        
+        <button type="submit" class="btn-login">
+            <i class="fas fa-sign-in-alt me-2"></i>Log In
+        </button>
+    </form>
+    
+    <!-- Link para mostrar formulário de recuperação de senha -->
+    <div class="mt-3 text-center">
+        <button type="button" id="toggleResetBtn" class="btn-toggle-reset">
+            <i class="fas fa-question-circle me-1"></i>Esqueceu sua senha?
+        </button>
+    </div>
+    
+    <!-- Formulário de Recuperação de Senha (inicialmente oculto) -->
+    <div id="resetPasswordForm" class="reset-password-form">
+        <h3><i class="fas fa-key me-2"></i>Redefinir Senha</h3>
+        
+        {% if reset_form %}
+        <form method="post" action="{% url 'perfumaria:reset_password_ajax' %}">
+            {% csrf_token %}
+            
+            <div class="mb-3">
+                <label for="id_email" style="color: #cccccc;">
+                    <i class="fas fa-envelope me-1"></i>Digite seu e-mail cadastrado:
+                </label>
+                <input type="email" name="email" id="id_email" class="form-control" 
+                       placeholder="seu@email.com" required
+                       style="width: 100%; padding: 10px 12px; background: #2a2a2a; border: 1px solid #444; border-radius: 5px; color: #ffffff; font-size: 14px;">
+            </div>
+            
+            <div class="mb-3">
+                <label for="id_new_password1" style="color: #cccccc;">
+                    <i class="fas fa-lock me-1"></i>Nova senha:
+                </label>
+                <input type="password" name="new_password1" id="id_new_password1" class="form-control" 
+                       placeholder="Digite a nova senha" required
+                       style="width: 100%; padding: 10px 12px; background: #2a2a2a; border: 1px solid #444; border-radius: 5px; color: #ffffff; font-size: 14px;">
+            </div>
+            
+            <div class="mb-3">
+                <label for="id_new_password2" style="color: #cccccc;">
+                    <i class="fas fa-lock me-1"></i>Confirme a nova senha:
+                </label>
+                <input type="password" name="new_password2" id="id_new_password2" class="form-control" 
+                       placeholder="Digite a nova senha novamente" required
+                       style="width: 100%; padding: 10px 12px; background: #2a2a2a; border: 1px solid #444; border-radius: 5px; color: #ffffff; font-size: 14px;">
+            </div>
+            
+            <div class="d-flex justify-content-between">
+                <button type="button" id="cancelResetBtn" class="btn-secondary">
+                    <i class="fas fa-times me-1"></i> Cancelar
+                </button>
+                <button type="submit" class="btn-login">
+                    <i class="fas fa-save me-1"></i> Redefinir Senha
+                </button>
+            </div>
+        </form>
+        {% else %}
+        <form method="post" id="resetForm">
+            {% csrf_token %}
+            
+            <div class="mb-3">
+                <label for="reset_email" style="color: #cccccc;">
+                    <i class="fas fa-envelope me-1"></i>Digite seu e-mail cadastrado:
+                </label>
+                <input type="email" name="email" id="reset_email" class="form-control" 
+                       placeholder="seu@email.com" required
+                       style="width: 100%; padding: 10px 12px; background: #2a2a2a; border: 1px solid #444; border-radius: 5px; color: #ffffff; font-size: 14px;">
+            </div>
+            
+            <div class="mb-3">
+                <label for="new_password1" style="color: #cccccc;">
+                    <i class="fas fa-lock me-1"></i>Nova senha:
+                </label>
+                <input type="password" name="new_password1" id="new_password1" class="form-control" 
+                       placeholder="Digite a nova senha" required
+                       style="width: 100%; padding: 10px 12px; background: #2a2a2a; border: 1px solid #444; border-radius: 5px; color: #ffffff; font-size: 14px;">
+            </div>
+            
+            <div class="mb-3">
+                <label for="new_password2" style="color: #cccccc;">
+                    <i class="fas fa-lock me-1"></i>Confirme a nova senha:
+                </label>
+                <input type="password" name="new_password2" id="new_password2" class="form-control" 
+                       placeholder="Digite a nova senha novamente" required
+                       style="width: 100%; padding: 10px 12px; background: #2a2a2a; border: 1px solid #444; border-radius: 5px; color: #ffffff; font-size: 14px;">
+            </div>
+            
+            <div class="d-flex justify-content-between">
+                <button type="button" id="cancelResetBtn" class="btn-secondary">
+                    <i class="fas fa-times me-1"></i> Cancelar
+                </button>
+                <button type="submit" class="btn-login">
+                    <i class="fas fa-save me-1"></i> Redefinir Senha
+                </button>
+            </div>
+        </form>
+        {% endif %}
+        
+        <div id="resetMessage" style="display: none; margin-top: 15px;"></div>
+    </div>
+    
+    <a href="{% url 'signup'%}">Não tem conta? Inscreva-se.</a>
+</div>
+
+<!-- Adicionar botão para mostrar/ocultar senha -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Adicionar botão para mostrar/ocultar senha
+    const passwordFields = document.querySelectorAll('input[type="password"]');
+    passwordFields.forEach(function(passwordField) {
+        const parentDiv = passwordField.parentElement;
+        
+        // Criar botão de mostrar/ocultar
+        const toggleBtn = document.createElement('button');
+        toggleBtn.type = 'button';
+        toggleBtn.innerHTML = '<i class="fas fa-eye"></i>';
+        toggleBtn.style.position = 'absolute';
+        toggleBtn.style.right = '10px';
+        toggleBtn.style.top = '50%';
+        toggleBtn.style.transform = 'translateY(-50%)';
+        toggleBtn.style.background = 'transparent';
+        toggleBtn.style.border = 'none';
+        toggleBtn.style.color = '#cccccc';
+        toggleBtn.style.cursor = 'pointer';
+        toggleBtn.style.zIndex = '10';
+        
+        // Adicionar estilos ao campo de senha
+        passwordField.style.paddingRight = '40px';
+        parentDiv.style.position = 'relative';
+        parentDiv.appendChild(toggleBtn);
+        
+        // Funcionalidade do botão
+        toggleBtn.addEventListener('click', function() {
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+                toggleBtn.innerHTML = '<i class="fas fa-eye-slash"></i>';
+            } else {
+                passwordField.type = 'password';
+                toggleBtn.innerHTML = '<i class="fas fa-eye"></i>';
+            }
+        });
+    });
+    
+    // Toggle do formulário de recuperação de senha
+    const toggleResetBtn = document.getElementById('toggleResetBtn');
+    const resetPasswordForm = document.getElementById('resetPasswordForm');
+    const cancelResetBtn = document.getElementById('cancelResetBtn');
+    const loginForm = document.getElementById('loginForm');
+    const resetForm = document.getElementById('resetForm');
+    const resetMessage = document.getElementById('resetMessage');
+    
+    if (toggleResetBtn && resetPasswordForm) {
+        toggleResetBtn.addEventListener('click', function() {
+            resetPasswordForm.classList.toggle('active');
+            loginForm.style.display = resetPasswordForm.classList.contains('active') ? 'none' : 'block';
+        });
+    }
+    
+    if (cancelResetBtn && resetPasswordForm) {
+        cancelResetBtn.addEventListener('click', function() {
+            resetPasswordForm.classList.remove('active');
+            loginForm.style.display = 'block';
+            resetMessage.style.display = 'none';
+        });
+    }
+    
+    // Submissão do formulário de recuperação de senha
+    if (resetForm) {
+        resetForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(resetForm);
+            
+            fetch('{% url "perfumaria:reset_password_ajax" %}', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    resetMessage.innerHTML = `
+                        <div class="alert alert-success">
+                            <i class="fas fa-check-circle me-2"></i>
+                            ${data.message}
+                        </div>
+                    `;
+                    resetMessage.style.display = 'block';
+                    resetForm.reset();
+                    
+                    // Esconder formulário após 3 segundos
+                    setTimeout(function() {
+                        resetPasswordForm.classList.remove('active');
+                        loginForm.style.display = 'block';
+                        resetMessage.style.display = 'none';
+                    }, 3000);
+                } else {
+                    resetMessage.innerHTML = `
+                        <div class="alert alert-danger">
+                            <i class="fas fa-exclamation-circle me-2"></i>
+                            ${data.message}
+                        </div>
+                    `;
+                    resetMessage.style.display = 'block';
+                }
+            })
+            .catch(error => {
+                resetMessage.innerHTML = `
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                        Erro ao processar a solicitação. Tente novamente.
+                    </div>
+                `;
+                resetMessage.style.display = 'block';
+            });
+        });
+    }
+});
+</script>
+{% endblock %}

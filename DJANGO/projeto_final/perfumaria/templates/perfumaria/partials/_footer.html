@@ -1,0 +1,276 @@
+<link href='https://fonts.googleapis.com/css?family=Alegreya SC' rel='stylesheet'>
+
+<footer style="
+    background: linear-gradient(to right, #0a0a0a, #1a1a1a);
+    padding: 50px 40px 30px;
+    border-top: 2px solid #b0ccc4;
+    margin-top: 60px;
+">
+    <div style="
+        max-width: 1200px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 40px;
+    ">
+        
+        
+        <div>
+            <h3 style="
+                font-family: 'Alegreya SC';
+                font-size: 32px;
+                color: #F8FFFD;
+                margin-bottom: 20px;
+                padding-bottom: 10px;
+                border-bottom: 1px solid #b0ccc4;
+            ">
+                {% if footer_info %}
+                    {{ footer_info.titulo }}
+                {% else %}
+                    Quem Somos
+                {% endif %}
+            </h3>
+            <p style="
+                color: #b0ccc4;
+                line-height: 1.6;
+                font-size: 15px;
+            ">
+                {% if footer_info %}
+                    {{ footer_info.descricao }}
+                {% else %}
+                    A Perfumaria Lux é referência em fragrâncias exclusivas 
+                    desde 2010. Trazemos os melhores aromas internacionais 
+                    com elegância e sofisticação única.
+                {% endif %}
+            </p>
+        </div>
+
+       
+        <div>
+            <h3 style="
+                font-family: 'Alegreya SC', cursive;
+                font-size: 32px;
+                color: #F8FFFD;
+                margin-bottom: 20px;
+                padding-bottom: 10px;
+                border-bottom: 1px solid #b0ccc4;
+            ">
+                Fale Conosco
+            </h3>
+            <ul style="list-style: none; padding: 0;">
+                <li style="margin-bottom: 12px;">
+                    <a href="#" style="
+                        color: #accdcb;
+                        text-decoration: none;
+                        display: flex;
+                        align-items: center;
+                        gap: 10px;
+                        transition: color 0.3s;
+                    " onmouseover="this.style.color='#F8FFFD';"
+                       onmouseout="this.style.color='#accdcb';">
+                        <i class="fas fa-envelope" style="font-size: 16px;"></i>
+                        <span>Email: contato@perfumarialux.com</span>
+                    </a>
+                </li>
+                <li style="margin-bottom: 12px;">
+                    <a href="#" style="
+                        color: #accdcb;
+                        text-decoration: none;
+                        display: flex;
+                        align-items: center;
+                        gap: 10px;
+                        transition: color 0.3s;
+                    " onmouseover="this.style.color='#F8FFFD';"
+                       onmouseout="this.style.color='#accdcb';">
+                        <i class="fas fa-phone" style="font-size: 16px;"></i>
+                        <span>Telefone: (11) 99999-9999</span>
+                    </a>
+                </li>
+                <li style="margin-bottom: 12px;">
+                    <a href="#" style="
+                        color: #accdcb;
+                        text-decoration: none;
+                        display: flex;
+                        align-items: center;
+                        gap: 10px;
+                        transition: color 0.3s;
+                    " onmouseover="this.style.color='#F8FFFD';"
+                       onmouseout="this.style.color='#accdcb';">
+                        <i class="fas fa-map-marker-alt" style="font-size: 16px;"></i>
+                        <span>Endereço: Rua das Flores, 123</span>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="{% url 'perfumaria:contact' %}" 
+                       style="
+                        color: #accdcb;
+                        text-decoration: none;
+                        display: flex;
+                        align-items: center;
+                        gap: 10px;
+                        transition: color 0.3s;
+                    " onmouseover="this.style.color='#F8FFFD';"
+                       onmouseout="this.style.color='#accdcb';">
+                        <i class="fas fa-comments" style="font-size: 16px;"></i>
+                        <span> Fale Conosco </span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+       
+        <div>
+            <h3 style="
+                font-family: 'Alegreya SC', cursive;
+                font-size: 32px;
+                color: #F8FFFD;
+                margin-bottom: 20px;
+                padding-bottom: 10px;
+                border-bottom: 1px solid #b0ccc4;
+            ">
+                Políticas
+            </h3>
+            <ul style="list-style: none; padding: 0;">
+                <li style="margin-bottom: 12px;">
+                    <a href="{% url 'perfumaria:politica_devolucao' %}" 
+                       style="
+                        color: #accdcb;
+                        text-decoration: none;
+                        display: flex;
+                        align-items: center;
+                        gap: 10px;
+                        transition: color 0.3s;
+                    " onmouseover="this.style.color='#F8FFFD';"
+                       onmouseout="this.style.color='#accdcb';">
+                        <i class="fas fa-exchange-alt" style="font-size: 16px;"></i>
+                        <span>Política de Devolução</span>
+                    </a>
+                </li>
+                <li style="margin-bottom: 12px;">
+                    <a href="{% url 'perfumaria:politica_privacidade' %}" 
+                       style="
+                        color: #accdcb;
+                        text-decoration: none;
+                        display: flex;
+                        align-items: center;
+                        gap: 10px;
+                        transition: color 0.3s;
+                    " onmouseover="this.style.color='#F8FFFD';"
+                       onmouseout="this.style.color='#accdcb';">
+                        <i class="fas fa-shield-alt" style="font-size: 16px;"></i>
+                        <span>Política de Privacidade</span>
+                    </a>
+                </li>
+                <li style="margin-bottom: 12px;"></li>
+                    <a href="{% url 'perfumaria:termos_uso' %}" 
+                       style="
+                        color: #accdcb;
+                        text-decoration: none;
+                        display: flex;
+                        align-items: center;
+                        gap: 10px;
+                        transition: color 0.3s;
+                    " onmouseover="this.style.color='#F8FFFD';"
+                       onmouseout="this.style.color='#accdcb';">
+                        <i class="fas fa-file-contract" style="font-size: 16px;"></i>
+                        <span>Termos de Uso</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        
+        <div>
+            <h3 style="
+                font-family: 'Alegreya SC', cursive;
+                font-size: 32px;
+                color: #F8FFFD;
+                margin-bottom: 20px;
+                padding-bottom: 10px;
+                border-bottom: 1px solid #b0ccc4;
+            ">
+                Redes Sociais
+            </h3>
+            <div style="display: flex; flex-direction: column; gap: 15px;">
+                
+                <a href="{% if footer_info %}{{ footer_info.linkedin_url }}{% else %}#{% endif %}" 
+                   target="_blank"
+                   style="
+                    display: flex;
+                    align-items: center;
+                    gap: 12px;
+                    color: #accdcb;
+                    text-decoration: none;
+                    padding: 12px 15px;
+                    border-radius: 8px;
+                    background: rgba(255, 255, 255, 0.05);
+                    transition: all 0.3s;
+                " onmouseover="this.style.background='rgba(0, 119, 181, 0.1)'; this.style.transform='translateX(5px)';"
+                   onmouseout="this.style.background='rgba(255, 255, 255, 0.05)'; this.style.transform='translateX(0)';">
+                    <i class="fab fa-linkedin" style="font-size: 24px;"></i>
+                    <span>LinkedIn</span>
+                </a>
+                
+                
+                <a href="{% if footer_info %}{{ footer_info.instagram_url }}{% else %}#{% endif %}" 
+                   target="_blank"
+                   style="
+                    display: flex;
+                    align-items: center;
+                    gap: 12px;
+                    color: #accdcb;
+                    text-decoration: none;
+                    padding: 12px 15px;
+                    border-radius: 8px;
+                    background: rgba(255, 255, 255, 0.05);
+                    transition: all 0.3s;
+                " onmouseover="this.style.background='rgba(228, 64, 95, 0.1)'; this.style.transform='translateX(5px)';"
+                   onmouseout="this.style.background='rgba(255, 255, 255, 0.05)'; this.style.transform='translateX(0)';">
+                    <i class="fab fa-instagram" style="font-size: 24px;"></i>
+                    <span>Instagram</span>
+                </a>
+                
+                
+                <a href="{% if footer_info %}{{ footer_info.twitter_url }}{% else %}#{% endif %}" 
+                   target="_blank"
+                   style="
+                    display: flex;
+                    align-items: center;
+                    gap: 12px;
+                    color: #accdcb;
+                    text-decoration: none;
+                    padding: 12px 15px;
+                    border-radius: 8px;
+                    background: rgba(255, 255, 255, 0.05);
+                    transition: all 0.3s;
+                " onmouseover="this.style.background='rgba(29, 161, 242, 0.1)'; this.style.transform='translateX(5px)';"
+                   onmouseout="this.style.background='rgba(255, 255, 255, 0.05)'; this.style.transform='translateX(0)';">
+                    <i class="fab fa-twitter" style="font-size: 24px;"></i>
+                    <span>Twitter</span>
+                </a>
+            </div>
+        </div>
+
+    </div>
+    
+    
+    <div style="
+        text-align: center;
+        margin-top: 50px;
+        padding-top: 25px;
+        border-top: 1px solid #F8FFFD;
+        color: #accdcb;
+        font-size: 14px;
+    ">
+        <p>
+            © 2024 Perfumaria Lux - Todos os direitos reservados | 
+            <span style="color: #F8FFFD;">Desenvolvido com ódio</span>
+        </p>
+        <p style="margin-top: 10px; font-size: 12px; color: #666;">
+            {% if footer_info %}
+                Última atualização: {{ footer_info.data_atualizacao|date:"d/m/Y" }}
+            {% endif %}
+        </p>
+    </div>
+</footer>

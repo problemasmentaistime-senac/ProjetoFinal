@@ -1,0 +1,117 @@
+
+{% extends 'perfumaria/base.html' %}
+
+{% block content %}
+<style>
+.profile-box {
+    max-width: 420px;
+    margin: 50px auto;
+    padding: 30px;
+    background: #000000;
+    border: 1px solid #b0ccc4;
+    border-radius: 10px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+}
+
+.profile-box h2 {
+    color: #F8FFFD;
+    font-family: 'Alegreya SC', serif;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.profile-image {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 3px solid #b0ccc4;
+    display: block;
+    margin: 0 auto 20px auto;
+}
+
+.fieldWrapper label {
+    color: #F8FFFD;
+    font-size: 14px;
+    font-weight: 500;
+    display: block;
+    margin-top: 12px;
+}
+
+.fieldWrapper input,
+.fieldWrapper textarea,
+.fieldWrapper select {
+    width: 100%;
+    padding: 10px;
+    background: #1a1a1a;
+    border: 1px solid #444;
+    border-radius: 5px;
+    color: #F8FFFD;
+    margin-top: 5px;
+}
+
+.fieldWrapper input:focus,
+.fieldWrapper textarea:focus {
+    outline: none;
+    border-color: #b0ccc4;
+}
+
+input[type="submit"] {
+    background: #b0ccc4;
+    color: #000000;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 25px;
+    font-size: 15px;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 20px;
+    font-family: 'Alegreya SC', serif;
+    transition: background 0.3s ease;
+}
+
+input[type="submit"]:hover {
+    background: #94b3a8;
+}
+</style>
+
+<div class="profile-box">
+    <h2>Perfil do Usuário</h2>
+
+    <img src="{{ user.perfil.imagem.url }}" alt="Imagem de Perfil" class="profile-image">
+
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        {% for field in u_form %}
+            <div class="fieldWrapper">
+                {{ field.errors }}
+                {{ field.label_tag }} {{ field }}
+            </div>
+        {% endfor %}
+
+        {% for field in p_form %}
+            <div class="fieldWrapper">
+                {{ field.errors }}
+                {{ field.label_tag }} {{ field }}
+            </div>
+        {% endfor %}
+        <p>Endereço mais recente:<p>
+        {% for endereco in user.enderecos.all %}
+            {% if forloop.last %}
+                <p>{{ endereco }}</p>
+            {% endif %}
+        {% endfor %}
+
+        <input type="submit" value="Atualizar Perfil">
+
+        <div class="text-center mt-4">
+            <a href="{% url 'perfumaria:lista_pedidos' %}" class="btn-cart">
+                Histórico de Pedidos
+            </a>
+        </div>
+
+    </form>
+</div>
+
+{% endblock %}

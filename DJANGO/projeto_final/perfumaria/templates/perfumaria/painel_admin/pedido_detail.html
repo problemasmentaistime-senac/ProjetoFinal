@@ -1,0 +1,110 @@
+{% extends 'perfumaria/painel_admin/index.html' %}
+
+{% block page_title %}Detalhes do Pedido #{{ pedido.id }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">Itens do Pedido</h5>
+            </div>
+            <div class="card-body">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Produto</th>
+                            <th>Preço Unit.</th>
+                            <th>Quantidade</th>
+                            <th>Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in pedido.itens.all %}
+                        <tr>
+                            <td>
+                                <strong>{{ item.produto.nome }}</strong><br>
+                                <small class="text-muted">Categoria: {{ item.produto.categoria.nome }}</small>
+                            </td>
+                            <td>R$ {{ item.preco|floatformat:2 }}</td>
+                            <td>{{ item.quantity }}</td>
+                            <td>R$ {{ item.get_subtotal|floatformat:2 }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="3" class="text-end"><strong>Total:</strong></td>
+                            <td><strong>R$ {{ pedido.total_pedido|floatformat:2 }}</strong></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">Informações do Pedido</h5>
+            </div>
+            <div class="card-body">
+                <dl class="row">
+                    <dt class="col-sm-5">ID do Pedido:</dt>
+                    <dd class="col-sm-7">#{{ pedido.id }}</dd>
+                    
+                    <dt class="col-sm-5">Data:</dt>
+                    <dd class="col-sm-7">{{ pedido.data_pedido|date:"d/m/Y H:i" }}</dd>
+                    
+                    <dt class="col-sm-5">Status:</dt>
+                    <dd class="col-sm-7">
+                        {% if pedido.status == 'P' %}
+                            <span class="badge bg-warning">Pendente</span>
+                        {% elif pedido.status == 'PA' %}
+                            <span class="badge bg-success">Pago</span>
+                        {% elif pedido.status == 'E' %}
+                            <span class="badge bg-info">Enviado</span>
+                        {% endif %}
+                    </dd>
+                    
+                    <dt class="col-sm-5">Cliente:</dt>
+                    <dd class="col-sm-7">
+                        {{ pedido.cliente.username }}<br>
+                        <small>{{ pedido.cliente.email }}</small>
+                    </dd>
+                    
+                    <dt class="col-sm-5">Total:</dt>
+                    <dd class="col-sm-7">R$ {{ pedido.total_pedido|floatformat:2 }}</dd>
+                </dl>
+                
+                <div class="d-grid gap-2">
+                    <a href="{% url 'perfumaria:admin_pedido_update' pedido.pk %}" class="btn btn-primary">
+                        <i class="fas fa-edit me-1"></i> Alterar Status
+                    </a>
+                    <a href="{% url 'perfumaria:admin_pedido_list' %}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left me-1"></i> Voltar para Lista
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Endereço de Entrega</h5>
+            </div>
+            <div class="card-body">
+                {% if pedido.endereco_entrega %}
+                <p class="mb-1"><strong>Endereço:</strong><br>
+                    {{ pedido.endereco_entrega.endereco }}</p>
+                <p class="mb-1"><strong>Cidade/Estado:</strong><br>
+                    {{ pedido.endereco_entrega.cidade }} - {{ pedido.endereco_entrega.estado }}</p>
+                <p class="mb-0"><strong>CEP:</strong><br>
+                    {{ pedido.endereco_entrega.cep }}</p>
+                {% else %}
+                <p class="text-muted">Endereço não informado</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

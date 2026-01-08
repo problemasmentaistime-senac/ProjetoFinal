@@ -1,0 +1,186 @@
+<link href='https://fonts.googleapis.com/css?family=Alegreya SC' rel='stylesheet'>
+
+<div style="
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 0 20px;
+">
+    
+    <!-- Logo -->
+    <div style="font-family: 'Alegreya SC'; font-size: 24px; color: #b0ccc4; background-color: #000000;">
+        Perfumaria Problemas Mentais
+    </div>
+    
+    <!-- Menu Central -->
+    <nav style="display: flex; align-items: left; gap: 40px; background-color: #000000;">
+        
+        <!-- Home -->
+        <div style="position: relative;">
+            <a href="{% url 'perfumaria:home' %}" style="
+                background:#F8FFFD;
+                color: #000000;
+                padding: 10px 25px;
+                border-radius: 25px;
+                font-weight: 600;
+                font-size: 16px;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                text-decoration: none;
+                transition: all 0.3s;
+            ">
+                <i class="fas fa-home"></i>
+                <span>Home</span>
+            </a>
+        </div>
+        
+        <!-- Produtos OU Gerenciar Produtos (para admin) -->
+        <div style="position: relative;">
+            {% if user.is_authenticated and user.is_superuser %}
+                <!-- Link para superusuário -->
+                <a href="{% url 'perfumaria:perfume_list' %}" style="
+                    background: #F8FFFD;
+                    color: #000000;
+                    padding: 10px 25px;
+                    border-radius: 25px;
+                    font-weight: 600;
+                    font-size: 16px;
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                    text-decoration: none;
+                    transition: all 0.3s;
+                " onmouseover="this.style.background='#F8FFFD'; this.style.color='#000000';"
+                   onmouseout="this.style.background='#accdcb'; this.style.color='#000000';">
+                    <i class="fas fa-cogs"></i>
+                    <span>Gerenciar Produtos</span>
+                </a>
+            {% else %}
+                <!-- Link normal para usuários comuns -->
+                <a href="{% url 'perfumaria:produtos' %}" style="
+                    background: #333333;
+                    color: #b0ccc4;
+                    padding: 10px 25px;
+                    border-radius: 25px;
+                    font-weight: 600;
+                    font-size: 16px;
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                    text-decoration: none;
+                    cursor: pointer;
+                    transition: all 0.3s;
+                " onmouseover="this.style.background='#F8FFFD4'; this.style.color='#F8FFFD';"
+                   onmouseout="this.style.background='#accdcb'; this.style.color='#accdcb';">
+                    <i class="fas fa-store"></i>
+                    <span>Produtos</span>
+                </a>
+            {% endif %}
+        </div>
+
+    </nav>
+    
+    <!-- Menu Direita -->
+    <div style="
+        display: flex;
+        align-items: center;
+        gap: 20px;
+    ">
+        
+        <!-- Carrinho -->
+        <a href="{% url 'perfumaria:view_cart' %}">
+        <button style="
+            background: #000000;
+            color: #b0ccc4;
+            border: 1px solid #333333;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 18px;
+        " onmouseover="this.style.background='#444'; this.style.color='#F8FFFD'; this.style.borderColor='#F8FFFD';"
+           onmouseout="this.style.background='#444'; this.style.color='#accdcb'; this.style.borderColor='#accdcb';"
+           title="Carrinho de Compras">
+            <i class="fas fa-shopping-cart"></i>
+        </button>
+        </a>
+        
+        {% if user.is_authenticated %}
+            <!-- Perfil -->
+            <a href="{% url 'perfumaria:perfil' %}">
+                <button style="
+                    background: #000000;
+                    color: #b0ccc4;
+                    border: 1px solid #333333;
+                    border-radius: 25px;
+                    padding: 8px 20px;
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                    cursor: pointer;
+                    transition: all 0.3s;
+                    font-size: 15px;
+                    font-weight: 500;
+                " onmouseover="this.style.background='#444'; this.style.color='#F8FFFD'; this.style.borderColor='#F8FFFD';"
+                   onmouseout="this.style.background='#444'; this.style.color='#accdcb'; this.style.borderColor='#accdcb';"
+                   title="Perfil do Usuário">
+                    <i class="fas fa-user"></i>
+                    <span>Perfil</span>
+                </button>
+            </a>
+
+            <!-- Logout -->
+            <form action="{% url 'logout' %}" method="post">
+                {% csrf_token %}
+                <button type="submit" style="
+                    background: #000000;
+                    color: #b0ccc4;
+                    border: 1px solid #333333;
+                    border-radius: 25px;
+                    padding: 8px 20px;
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                    cursor: pointer;
+                    transition: all 0.3s;
+                    font-size: 15px;
+                    font-weight: 500;
+                " onmouseover="this.style.background='#444'; this.style.color='#F8FFFD'; this.style.borderColor='#F8FFFD';"
+                   onmouseout="this.style.background='#444'; this.style.color='#accdcb'; this.style.borderColor='#accdcb';"
+                   title="Logout">
+                    <span>Logout</span>
+                </button>
+            </form>
+
+        {% else %}
+            <!-- Login -->
+            <a href="{% url 'login' %}">
+                <button style="
+                    background: transparent;
+                    color: #b0ccc4;
+                    border: 1px solid #333333;
+                    border-radius: 25px;
+                    padding: 8px 20px;
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                    cursor: pointer;
+                    transition: all 0.3s;
+                    font-size: 15px;
+                    font-weight: 500;
+                " onmouseover="this.style.background='#444'; this.style.color='#F8FFFD'; this.style.borderColor='#F8FFFD';"
+                   onmouseout="this.style.background='#444'; this.style.color='#accdcb'; this.style.borderColor='#accdcb';"
+                   title="Login do Usuário">
+                    <i class="fas fa-user"></i>
+                    <span>Login</span>
+                </button>
+            </a>
+        {% endif %}
+    </div>
+</div>

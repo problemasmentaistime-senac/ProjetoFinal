@@ -1,0 +1,75 @@
+{% extends 'perfumaria/base.html' %}
+
+
+{% block content %}
+<style>
+.contact-box {
+    max-width: 420px;
+    margin: 50px auto;
+    padding: 30px;
+    background: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 10px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+}
+
+
+.fieldWrapper label {
+    color: #F8FFFD;
+    font-size: 14px;
+    font-weight: 500;
+    display: block;
+    margin-top: 12px;
+}
+
+
+.fieldWrapper input,
+.fieldWrapper textarea,
+.fieldWrapper select {
+    width: 100%;
+    padding: 10px;
+    background: #2a2a2a;
+    border: 1px solid #444;
+    border-radius: 5px;
+    color: #fff;
+    margin-top: 5px;
+}
+
+.fieldWrapper input:focus,
+.fieldWrapper textarea:focus {
+    outline: none;
+    border-color: #F8FFFD;
+}
+
+
+input[type="submit"] {
+    background: #F8FFFD;
+    color: #000;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 25px;
+    font-size: 15px;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 20px;
+}
+
+input[type="submit"]:hover {
+    background: #accdcb;
+}
+</style>
+
+<div class="contact-box">
+    <form action="/contact/" method="post">
+        {% csrf_token %}
+        {% for field in form %}
+            <div class="fieldWrapper">
+                {{ field.errors }}
+                {{ field.label_tag }} {{ field }}
+            </div>
+        {% endfor %}
+        <input type="submit" value="Submit">
+    </form>
+</div>
+
+{% endblock %}
